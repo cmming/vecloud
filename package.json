@@ -1,0 +1,11 @@
+{
+  "name": "vecloud",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "commit": "git-cz"
+  },
+  "author": "",
+  "license": "ISC"
+}
