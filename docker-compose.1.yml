@@ -1,0 +1,77 @@
+version: '3'
+services:
+  app:
+    container_name: app-server
+    image: nextcloud:fpm
+    stdin_open: true
+    tty: true
+    restart: always
+    expose:
+      - '80'
+      - '9000'
+    networks:
+      - onlyoffice
+    volumes:
+      - ./serverDev:/var/www/html
+      - "${STORAGE_PATH}:/var/www/html/data"
+  onlyoffice-document-server:
+    container_name: onlyoffice-document-server
+    image: onlyoffice/documentserver:latest
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - onlyoffice
+    expose:
+      - '80'
+      - '443'
+    volumes:
+      - document_data:/var/www/onlyoffice/Data
+      - document_log:/var/log/onlyoffice
+      - ./onlyoffice/default.json:/etc/onlyoffice/documentserver/default.json
+  nginx:
+    container_name: nginx-server
+    image: nginx
+    stdin_open: true
+    tty: true
+    restart: always
+    ports:
+      - "${NGINX_HTTP}:80"
+      - "${NGINX_HTTPS}:443"
+    networks:
+      - onlyoffice
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./serverDev:/var/www/html
+      - ./nginx/cert:/etc/nginx/cert
+  db:
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+    networks:
+      - onlyoffice
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    expose:
+      - 6379
+    restart: always
+    networks:
+      - onlyoffice
+
+
+networks:
+  onlyoffice:
+    driver: 'bridge'
+volumes:
+  document_data:
+  document_log:
+  mysql_data:
