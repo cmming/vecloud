@@ -1,10 +1,11 @@
 version: '3'
 services:
   app:
-    container_name: app-server
-    image: vesystem/vecloud-fpm:17.0
+    # container_name: app-server
+    # image: vesystem/vecloud-fpm:17.0
     # image: vesystem/vecloud:17.0
-    # image: nextcloud:fpm-alpine
+    image: vesystem/vecloud-fpm-alpine-full:17.0
+    # image: nextcloud
     stdin_open: true
     tty: true
     restart: always
@@ -15,7 +16,7 @@ services:
     networks:
       - vecloud
   nginx:
-    container_name: nginx-server
+    # container_name: nginx-server
     image: nginx
     stdin_open: true
     tty: true
@@ -29,7 +30,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - nextcloud:/var/www/html
   db:
-    container_name: mariadb
+    # container_name: mariadb
     image: mariadb
     restart: always
     volumes:
